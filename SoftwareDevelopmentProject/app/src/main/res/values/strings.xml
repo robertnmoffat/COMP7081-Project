@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">SoftwareDevelopmentProject</string>
+
+    <string name="title_activity_game">GameActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="abilities_menu">Abilities</string>>
+    <string name="cancel_button">X</string>>
+    <string name="last_button">&#60;</string>>
+    <string name="next_button">&#62;</string>
+
+
+    <string-array name="country_arrays">
+        <item>Ability 1</item>
+        <item>Ability 2</item>
+        <item>Ability 3</item>
+        <item>Ability 4</item>
+        <item>Ability 5</item>
+    </string-array>
+</resources>

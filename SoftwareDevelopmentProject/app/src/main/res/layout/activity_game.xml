@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin_zero"
+    android:paddingLeft="@dimen/activity_horizontal_margin_zero"
+    android:paddingRight="@dimen/activity_horizontal_margin_zero"
+    android:paddingTop="@dimen/activity_vertical_margin_zero"
+    tools:context="com.example.robert.softwaredevelopmentproject.GameActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1"
+        android:layout_marginBottom="1dp"
+        android:layout_alignParentTop="true">
+
+        <com.example.robert.softwaredevelopmentproject.GameScreen
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:id="@+id/gameScreenView"
+            ></com.example.robert.softwaredevelopmentproject.GameScreen>>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:layout_weight="0.9">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" Ship Name"
+                android:id="@+id/textView4" />
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner"
+                android:prompt="@string/abilities_menu"
+                android:entries="@array/country_arrays"/>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="@string/cancel_button"
+                android:id="@+id/cancel_button" />
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="@string/last_button"
+                android:id="@+id/last_button" />
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="@string/next_button"
+                android:id="@+id/next_button" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:id="@+id/imageButton"
+            android:background="@drawable/pause_button"
+            android:onClick="goToRewards" />
+    </LinearLayout>
+
+</FrameLayout>
