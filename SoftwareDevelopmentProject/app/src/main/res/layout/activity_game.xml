@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
-            android:layout_weight="0.9">
+            android:layout_weight="0.8">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,19 +53,22 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:text="@string/cancel_button"
-                android:id="@+id/cancel_button" />
+                android:id="@+id/cancel_button"
+                android:onClick="unselectShipButton"/>
 
             <Button
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:text="@string/last_button"
-                android:id="@+id/last_button" />
+                android:id="@+id/last_button"
+                android:onClick="previousShipButton"/>
 
             <Button
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:text="@string/next_button"
-                android:id="@+id/next_button" />
+                android:id="@+id/next_button"
+                android:onClick="nextShipButton"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -74,20 +77,14 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/gameLayout">
 
         <View
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:id="@+id/imageButton"
-            android:background="@drawable/pause_button"
-            android:onClick="goToRewards" />
     </LinearLayout>
 
 </FrameLayout>

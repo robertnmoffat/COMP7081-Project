@@ -62,7 +62,7 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/svLinearLayout2"></LinearLayout>
+                    android:id="@+id/ownedShipsLinearLayout"></LinearLayout>
             </ScrollView>
         </LinearLayout>
 
@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Start"
-                android:id="@+id/button4"
+                android:id="@+id/startGameButton"
                 android:onClick="startGameActivity" />
         </LinearLayout>
 

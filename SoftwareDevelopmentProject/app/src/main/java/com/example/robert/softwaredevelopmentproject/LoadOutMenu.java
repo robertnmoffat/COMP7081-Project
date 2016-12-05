@@ -68,6 +68,8 @@ public class LoadOutMenu extends AppCompatActivity{
         title.setGravity(Gravity.CENTER);
         sv.addView(title);
 
+        int buttonCount =0;
+
         for(final GuiShip ship: shipsChosen){
             LinearLayout ll = new LinearLayout(this);
             ll.setOrientation(LinearLayout.HORIZONTAL);
@@ -94,6 +96,8 @@ public class LoadOutMenu extends AppCompatActivity{
 
             Button button = new Button(this);
             button.setText("-");
+            int id = 888+buttonCount++;
+            button.setId(id);
             button.setLayoutParams(new LinearLayout.LayoutParams(120, 120));
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -115,13 +119,15 @@ public class LoadOutMenu extends AppCompatActivity{
             sv.addView(ll);
         }
 
-        LinearLayout sv2 = (LinearLayout)findViewById(R.id.svLinearLayout2);
+        LinearLayout sv2 = (LinearLayout)findViewById(R.id.ownedShipsLinearLayout);
         sv2.removeAllViews();
 
         TextView title2 = new TextView(this);
         title2.setText("Owned");
         title2.setGravity(Gravity.CENTER);
         sv2.addView(title2);
+
+        buttonCount=0;
 
         for(final GuiShip ship: shipsOwned) {
             LinearLayout ll = new LinearLayout(this);
@@ -146,6 +152,8 @@ public class LoadOutMenu extends AppCompatActivity{
 
             Button button = new Button(this);
             button.setText("+");
+            int id = 999+buttonCount++;
+            button.setId(id);
             button.setLayoutParams(new LinearLayout.LayoutParams(120, 120));
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -177,6 +185,7 @@ public class LoadOutMenu extends AppCompatActivity{
 
     public void startGameActivity(View view){
         if(totalPoints<=100) {
+            GameFunctions.setLoadoutShipList(shipsChosen);
             Intent intent = new Intent(this, GameActivity.class);
             startActivity(intent);
         }

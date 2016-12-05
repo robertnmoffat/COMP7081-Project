@@ -33,6 +33,8 @@ public class LoadGameActivity extends AppCompatActivity {
         LinearLayout ll = (LinearLayout)findViewById(R.id.filenamesLinearLayout);
         ll.removeAllViews();
 
+        int idCount = 0;
+
         //add save names to the activity
         for(final String curName: saveNames){
             final LinearLayout row = new LinearLayout(this);
@@ -46,6 +48,7 @@ public class LoadGameActivity extends AppCompatActivity {
             final Button button = new Button(this);
             button.setText(curName);
             button.setBackground(null);
+            button.setId(999+idCount++);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

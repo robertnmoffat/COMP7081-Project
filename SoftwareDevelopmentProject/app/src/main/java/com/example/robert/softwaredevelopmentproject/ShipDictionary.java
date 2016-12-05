@@ -1,5 +1,9 @@
 package com.example.robert.softwaredevelopmentproject;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,6 +15,12 @@ public class ShipDictionary {
     static HashMap<String, GuiShip> shipMap = new HashMap<>();
     static boolean initialized = false;
     static String[] names = {"Deimos","Io","Thebe"};
+    static String[] graphicNames = {"drawable://" +"ship1.png"};
+    public static HashMap<String, Integer> nameToArrayPos = new HashMap<String, Integer>(){{
+        put("Deimos", 0);
+        put("Io", 0);
+        put("Thebe", 0);
+    }};
 
     static int[] startingShipList = {1,1,1};
 
@@ -50,6 +60,16 @@ public class ShipDictionary {
         String name = names[ship];
         return shipMap.get(name).getValue();
     }
+
+    //loads and returns a given ship's graphic
+    public static Bitmap getGraphic(int type, Context context){
+        Bitmap shipBm = BitmapFactory.decodeResource(context.getResources(), R.drawable.ship1);
+        return shipBm;
+    }
+
+
+
+
 
     public static int[] getStartingShipList(){
         return startingShipList;
