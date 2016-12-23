@@ -21,7 +21,19 @@ public class Laser extends GameObject{
     }
 
     public void updatePosition(){
-        super.updatePosition();
+        float radAngle = (float)Math.toRadians(angle);
+
+        float movedx = x;
+        float movedy = y;
+        movedx += velocity*Math.cos(radAngle);
+        movedy += velocity*Math.sin(radAngle);
+
+        if(GameFunctions.isMoveInBounds(movedx, movedy)){
+            x=movedx;
+            y=movedy;
+        }else{
+            alive = false;
+        }
 
         age-=1;
 

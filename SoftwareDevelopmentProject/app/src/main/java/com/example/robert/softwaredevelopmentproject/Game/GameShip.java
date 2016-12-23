@@ -2,6 +2,7 @@ package com.example.robert.softwaredevelopmentproject.Game;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.text.format.Time;
 
 import com.example.robert.softwaredevelopmentproject.GameActivity;
@@ -127,7 +128,7 @@ public class GameShip extends GameObject {
 
         if(hasTargetPosition||hasEnemyTarget) {
             if(hasEnemyTarget){
-                if(enemyTarget.team==2)System.out.println(enemyTarget.health);
+                //if(enemyTarget.team==2)System.out.println(enemyTarget.health);
 
                 targetx = enemyTarget.getX();
                 targety = enemyTarget.getY();
@@ -203,10 +204,19 @@ public class GameShip extends GameObject {
             int squareLength = GameScreen.mapGridSquareSize;
 
             if(GameFunctions.hasGridPositionChanged(x,y,x+xMove,y+yMove)){
-                if(gridPosition.x>0&&gridPosition.y>0)
-                    GameScreen.shipGrid[gridPosition.x][gridPosition.y].remove(this);
-                gridPosition = GameFunctions.convertPositionToGridCoord(x+xMove,y+yMove);
-                GameScreen.shipGrid[gridPosition.x][gridPosition.y].add(this);
+                //System.out.println("GRIDPOSITION: "+gridPosition.x+" "+gridPosition.y);
+                Point potentialGridPos = GameFunctions.convertPositionToGridCoord(x+xMove,y+yMove);
+                if(potentialGridPos.x>=0&&potentialGridPos.y>=0
+                        &&potentialGridPos.x<GameScreen.shipGrid.length&&potentialGridPos.y<GameScreen.shipGrid[0].length) {
+                    if(gridPosition.x>=0&&gridPosition.y>=0)
+                        GameScreen.shipGrid[gridPosition.x][gridPosition.y].remove(this);
+                    gridPosition = potentialGridPos;
+                    GameScreen.shipGrid[gridPosition.x][gridPosition.y].add(this);
+                }else{
+                    targetx=GameScreen.mapSizex/2;
+                    targety=GameScreen.mapSizey/2;
+                    hasTargetPosition=true;
+                }
             }
 
             super.updatePosition();

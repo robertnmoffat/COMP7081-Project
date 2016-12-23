@@ -18,9 +18,11 @@ public class ShipDictionary {
     static String[] graphicNames = {"drawable://" +"ship1.png"};
     public static HashMap<String, Integer> nameToArrayPos = new HashMap<String, Integer>(){{
         put("Deimos", 0);
-        put("Io", 0);
-        put("Thebe", 0);
+        put("Io", 1);
+        put("Thebe", 2);
     }};
+
+    public static float[] shipSpeeds = {0.5f,0.25f,0.75f,0.5f};
 
     static int[] startingShipList = {1,1,1};
 
@@ -63,7 +65,25 @@ public class ShipDictionary {
 
     //loads and returns a given ship's graphic
     public static Bitmap getGraphic(int type, Context context){
-        Bitmap shipBm = BitmapFactory.decodeResource(context.getResources(), R.drawable.ship1);
+        Bitmap shipBm;
+
+        switch(type){
+            case 0:
+                shipBm = BitmapFactory.decodeResource(context.getResources(), R.drawable.ship1);
+                break;
+            case 1:
+                shipBm = BitmapFactory.decodeResource(context.getResources(), R.drawable.ship2);
+                break;
+            case 2:
+                shipBm = BitmapFactory.decodeResource(context.getResources(), R.drawable.ship3);
+                break;
+            case 3:
+                shipBm = BitmapFactory.decodeResource(context.getResources(), R.drawable.ship4);
+                break;
+            default:
+                shipBm = BitmapFactory.decodeResource(context.getResources(), R.drawable.ship1);
+                break;
+        }
         return shipBm;
     }
 

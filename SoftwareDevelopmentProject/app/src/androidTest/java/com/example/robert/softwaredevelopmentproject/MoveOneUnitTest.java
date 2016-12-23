@@ -1,35 +1,27 @@
 package com.example.robert.softwaredevelopmentproject;
 
-import android.app.Activity;
-import android.app.Instrumentation;
 import android.content.Intent;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.view.View;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.InstrumentationRegistry.getContext;
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
-import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
- * Created by dingus on 11/28/2016.
+ * Created by Robert on 12/5/2016.
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class StartAndPlayGameTest {
-
+public class MoveOneUnitTest {
     public static final String TEST_FILENAME = "TestFilename";
 
     @Rule
@@ -79,12 +71,23 @@ public class StartAndPlayGameTest {
 
 
     @Test
-    public void aquireGameObjectTest(){
+    public void unitMoveTest(){
         GameScreen gs = startUpNewGame();
 
-        if(gs==null)
+        waitFor(1000);
+
+        //onView(withId(R.id.next_button)).perform(click());
+        gs.selectNextShip();
+
+        waitFor(1000);
+
+        gs.fakeUnitMoveTouchTest(200, 200);//fake a user touch on the screen
+        if(gs.shipIsAtTargetAngleTest())
+            throw new AssertionError();
+
+        waitFor(1000);
+
+        if(!gs.shipIsAtTargetAngleTest())
             throw new AssertionError();
     }
-
-
 }

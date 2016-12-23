@@ -41,8 +41,8 @@
             android:layout_marginTop="26dp"
             android:onClick="continueToLoadout"
             android:layout_below="@+id/fileNameId"
-            android:layout_alignLeft="@+id/button7"
-            android:layout_alignStart="@+id/button7" />
+            android:layout_alignLeft="@+id/newGameCancelButton"
+            android:layout_alignStart="@+id/newGameCancelButton" />
 
         <Button
             android:layout_width="wrap_content"

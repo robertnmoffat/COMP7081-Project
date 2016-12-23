@@ -1,35 +1,27 @@
 package com.example.robert.softwaredevelopmentproject;
 
-import android.app.Activity;
-import android.app.Instrumentation;
 import android.content.Intent;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.view.View;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.InstrumentationRegistry.getContext;
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
-import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
- * Created by dingus on 11/28/2016.
+ * Created by Robert on 12/5/2016.
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class StartAndPlayGameTest {
-
+public class MoveShipOutOfBoundsTest {
     public static final String TEST_FILENAME = "TestFilename";
 
     @Rule
@@ -77,14 +69,29 @@ public class StartAndPlayGameTest {
         }
     }
 
-
     @Test
-    public void aquireGameObjectTest(){
+    public void shipMoveOutOfBounds(){
+        int moveDist=500;
+        int touchStartx = 200, touchStarty = 200;
         GameScreen gs = startUpNewGame();
 
-        if(gs==null)
+        gs.touch_start(200, 200);
+
+        waitFor(500);
+
+        for (int i=0; i<=moveDist; i++){
+            gs.touch_move(touchStartx-i,touchStarty+i);
+            waitFor(10);
+        }
+
+        gs.touch_up(touchStartx + moveDist, touchStarty + moveDist);
+
+        gs.moveShipToEdgeOfBoundsTest();
+
+        waitFor(10000);
+
+        if(!(gs.playerShips.get(0).getX()<GameScreen.mapSizex))
             throw new AssertionError();
+
     }
-
-
 }

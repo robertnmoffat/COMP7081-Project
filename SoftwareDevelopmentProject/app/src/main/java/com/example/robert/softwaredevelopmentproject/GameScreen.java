@@ -150,11 +150,11 @@ public class GameScreen extends View{
         int position = (int)startOfScreeny;
 
         for(GuiShip guiShip: loadoutShipList){
-            System.out.println("Creating Ship");
+            //System.out.println("Creating Ship");
             position+=75;
             int shipType = ShipDictionary.nameToArrayPos.get(guiShip.getName());
             testShip = new GameShip(startOfScreenx+50,position,1,shipType,context);
-            testShip.setVelocity(0.5f);
+            testShip.setVelocity(ShipDictionary.shipSpeeds[shipType]);
             playerShips.add(testShip);
         }
 
@@ -192,7 +192,7 @@ public class GameScreen extends View{
         return true;
     }
 
-    private void touch_up(float x, float y) {
+    public void touch_up(float x, float y) {
         if(selectedShip!=null){
             selectedShip.setTargetx(x-displacementx);
             selectedShip.setTargety(y-displacementy);
@@ -201,18 +201,23 @@ public class GameScreen extends View{
         }
     }
 
-    private void touch_move(float x, float y) {
+    public void touch_move(float x, float y) {
         if(selectedShip!=null){
             dragPosx = x;
             dragPosy = y;
             return;
         }
 
-        displacementx = x-touchStartx;
-        displacementy = y-touchStarty;
+        if(x-touchStartx<0&&x-touchStartx>-(mapSizex-getWidth())) {
+            displacementx = x - touchStartx;
+        }
+        if(y-touchStarty<0&&y-touchStarty>-(mapSizey-getHeight())) {
+            displacementy = y - touchStarty;
+        }
+
     }
 
-    private void touch_start(float x, float y) {
+    public void touch_start(float x, float y) {
         if(x>getWidth()-pauseButton.getWidth()-10&&y< 10+pauseButton.getHeight()){
             togglePauseGame();
             return;
@@ -235,6 +240,8 @@ public class GameScreen extends View{
             setupShips();
             hasBeenSetup = true;
         }
+
+        //System.out.println("selectedPosition: "+playerShips.get(0).getX());
 
         super.onDraw(canvas);
 
@@ -399,7 +406,7 @@ public class GameScreen extends View{
             isPaused = true;
     }
 
-    public void fakeTouch(float x, float y) {
+    public void fakeUnitMoveTouchTest(float x, float y) {
 
         touch_start(x, y);
         touch_move(x + 50, y + 50);
@@ -407,10 +414,24 @@ public class GameScreen extends View{
 
     }
 
-    public boolean shipIsAtTargetAngle(){
+    public boolean shipIsAtTargetAngleTest(){
         int shipAngle = Math.round(selectedShip.getAngle());
         int targetAngle = Math.round(selectedShip.getTargetAngle());
 
         return shipAngle==targetAngle;
+    }
+
+    public float getDisplacementx() {
+        return displacementx;
+    }
+
+    public float getDisplacementy() {
+        return displacementy;
+    }
+
+    public void moveShipToEdgeOfBoundsTest(){
+        GameShip ship = (GameShip)playerShips.get(0);
+
+        ship.setX(mapSizex-50);
     }
 }
