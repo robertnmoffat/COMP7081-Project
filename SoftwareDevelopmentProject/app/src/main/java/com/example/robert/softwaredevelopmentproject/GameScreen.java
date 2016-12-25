@@ -218,9 +218,13 @@ public class GameScreen extends View{
     }
 
     public void touch_start(float x, float y) {
-        if(x>getWidth()-pauseButton.getWidth()-10&&y< 10+pauseButton.getHeight()){
+        if(isPressOnPauseButton(x,y)){
             togglePauseGame();
             return;
+        }
+
+        if(isPressOnOwnedShip(x,y)){
+
         }
 
         if(selectedShip!=null){
@@ -231,6 +235,15 @@ public class GameScreen extends View{
 
         touchStartx = x-displacementx;
         touchStarty = y-displacementy;
+    }
+
+    private boolean isPressOnOwnedShip(float x, float y){
+        //Todo: properly test whether pressing ship.
+        return false;
+    }
+
+    private boolean isPressOnPauseButton(float x, float y){
+        return x>getWidth()-pauseButton.getWidth()-10&&y< 10+pauseButton.getHeight();
     }
 
 

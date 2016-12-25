@@ -27,7 +27,6 @@ public class GameFunctions {
     static float screenWidth;
     static float screenHeight;
 
-
     //if colliding with object, returns that, else returns null
     static public GameObject checkForCollision(float x, float y, float width, float height){
         Point gridPoint = convertPositionToGridCoord(x,y);
