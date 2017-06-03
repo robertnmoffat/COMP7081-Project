@@ -36,7 +36,7 @@ public class GameFunctions {
         float firstTop = y-height/2;
         float firstBottom = y+height/2;
 
-        for(GameObject object: GameScreen.shipGrid[gridPoint.x][gridPoint.y]){
+        for(GameObject object: GameController.shipGrid[gridPoint.x][gridPoint.y]){
             float objectWidth = object.getGraphic().getWidth();
             float objectHeight = object.getGraphic().getHeight();
 
@@ -55,9 +55,35 @@ public class GameFunctions {
     }
 
 
+    /**
+     * Higher precision collision check, but slower
+     * @param x position to check for collision
+     * @param y position to check for collision
+     * @param threshold minimum distance for it to be considered a collision
+     * @param objectsToCheck list of objects to check for collision
+     * @return returns collided object, if none returns null
+     */
+    static public GameObject checkForCollisionsAccurate(float x, float y, float threshold, ArrayList<GameObject> objectsToCheck){
+
+       // System.out.println(objectsToCheck.size());
+
+        for(GameObject object: objectsToCheck){
+            float diffx = object.getX()-x;
+            float diffy = object.getY()-y;
+
+            float totDiff = (float)Math.sqrt(diffx*diffx+diffy*diffy);
+
+            if(totDiff<threshold)
+                return object;
+        }
+
+        return null;
+    }
+
+
     //convert map position to a point on the grid for collision detection
     static public Point convertPositionToGridCoord(float x, float y){
-        int mapGridSquareSize = GameScreen.mapGridSquareSize;
+        int mapGridSquareSize = GameController.mapGridSquareSize;
         Point point = new Point();
         point.x = (int)x/mapGridSquareSize;
         point.y = (int)y/mapGridSquareSize;
@@ -66,8 +92,8 @@ public class GameFunctions {
 
     static public boolean isMoveInBounds(float x, float y){
         Point gridPoint = convertPositionToGridCoord(x,y);
-        if(gridPoint.x>=GameScreen.shipGrid.length||gridPoint.x<0)return false;
-        if(gridPoint.y>=GameScreen.shipGrid[0].length||gridPoint.y<0)return false;
+        if(gridPoint.x>=GameController.shipGrid.length||gridPoint.x<0)return false;
+        if(gridPoint.y>=GameController.shipGrid[0].length||gridPoint.y<0)return false;
         return true;
     }
 

@@ -37,12 +37,10 @@ public class GameScreen extends View{
 
     String gameText = "";
 
-    GameShip selectedShip = null;
-    int selectedShipIndex;
+
     Context context;
 
-    boolean isPaused = false;
-    boolean hasBeenSetup = false;
+
 
     float dragPosx=-1,dragPosy=-1;
 
@@ -52,16 +50,14 @@ public class GameScreen extends View{
     Bitmap playButton;
 
     public static float mapSizex, mapSizey;
-    public static int mapGridSquareSize = 60;
+
     //public static GameObject[][] shipGrid = new GameShip[(int)mapSizex][(int)mapSizey];
-    public static ArrayList<GameObject>[][] shipGrid;
+
 
     float displacementx=0, displacementy=0;
     float touchStartx,touchStarty;
 
-    ArrayList<GameObject> playerShips;
-    ArrayList<GameObject> enemyShips;
-    ArrayList<GameObject> gameObjects;
+    public GameController gameController;
 
     public GameScreen(Context context, AttributeSet aSet){
         super(context, aSet);
@@ -76,100 +72,9 @@ public class GameScreen extends View{
         mapSizex = background.getWidth()*2;
         mapSizey = background.getHeight()*2;
 
-        int gridCountHorizontal = (int)mapSizex/mapGridSquareSize;
-        int gridCountVertical = (int)mapSizey/mapGridSquareSize;
-
-        shipGrid = new ArrayList[gridCountHorizontal][gridCountVertical];
-
-        for(int i=0; i<shipGrid.length; i++){
-            for(int j=0; j<shipGrid[0].length; j++){
-                shipGrid[i][j]=new ArrayList<>();
-            }
-        }
+        gameController = new GameController(context, background.getWidth(), background.getHeight());
     }
 
-    public GameShip getRandomShip(int team){
-        if(team==1){
-            if(playerShips.size()!=0)
-                return (GameShip)playerShips.get(GameFunctions.getRandInt(playerShips.size()));
-            else
-                return null;
-        }
-        if(team==2){
-            if(enemyShips.size()!=0)
-                return (GameShip)enemyShips.get(GameFunctions.getRandInt(enemyShips.size()));
-            else
-                return null;
-        }
-        return null;
-    }
-
-
-    public void addObjectToScene(GameObject toAdd, int team){
-        switch (team){
-            case 0:
-                gameObjects.add(toAdd);
-                break;
-            case 1:
-                playerShips.add((GameShip)toAdd);
-                break;
-            case 2:
-                playerShips.add((GameShip)toAdd);
-                break;
-        }
-    }
-
-    public void addLaser(float x, float y, float angle){
-        Laser laser = new Laser(x,y,context);
-        laser.setVelocity(1);
-        laser.setAngle(angle);
-        gameObjects.add(laser);
-    }
-
-    public void addExplosion(float x, float y){
-        Explosion exp = new Explosion(x,y,0,context);
-        gameObjects.add(exp);
-    }
-
-    public void setupShips(){
-        playerShips = new ArrayList<>();
-        enemyShips = new ArrayList<>();
-        gameObjects = new ArrayList<>();
-
-        ArrayList<GuiShip> loadoutShipList = GameFunctions.getLoadoutShipList();
-        GameShip testShip;
-
-        float startOfScreenx = mapSizex/2-getWidth()/2;
-        float startOfScreeny = mapSizey/2-getHeight()/2;
-        float endOfScreenx = mapSizex/2+getWidth()/2;
-        float endOfScreeny = mapSizey/2+getHeight()/2;
-
-        displacementx = -startOfScreenx;
-        displacementy = -startOfScreeny;
-
-        int position = (int)startOfScreeny;
-
-        for(GuiShip guiShip: loadoutShipList){
-            //System.out.println("Creating Ship");
-            position+=75;
-            int shipType = ShipDictionary.nameToArrayPos.get(guiShip.getName());
-            testShip = new GameShip(startOfScreenx+50,position,1,shipType,context);
-            testShip.setVelocity(ShipDictionary.shipSpeeds[shipType]);
-            playerShips.add(testShip);
-        }
-
-        position = (int)startOfScreeny;
-
-        for(int i=0; i<3; i++){
-            position+=75;
-            int shipType = 0;
-            testShip = new GameShip(endOfScreenx-50, position,2,shipType,context);
-            testShip.setVelocity(0.5f);
-            testShip.setAngle(180);
-            testShip.setEnemyTarget((GameShip)playerShips.get(GameFunctions.getRandInt(playerShips.size())));
-            enemyShips.add(testShip);
-        }
-    }
 
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
@@ -193,6 +98,8 @@ public class GameScreen extends View{
     }
 
     public void touch_up(float x, float y) {
+        GameShip selectedShip = gameController.getSelectedShip();
+
         if(selectedShip!=null){
             selectedShip.setTargetx(x-displacementx);
             selectedShip.setTargety(y-displacementy);
@@ -202,6 +109,8 @@ public class GameScreen extends View{
     }
 
     public void touch_move(float x, float y) {
+        GameShip selectedShip = gameController.getSelectedShip();
+
         if(selectedShip!=null){
             dragPosx = x;
             dragPosy = y;
@@ -218,13 +127,16 @@ public class GameScreen extends View{
     }
 
     public void touch_start(float x, float y) {
+        GameShip selectedShip = gameController.getSelectedShip();
+
         if(isPressOnPauseButton(x,y)){
-            togglePauseGame();
+            gameController.togglePauseGame();
             return;
         }
 
-        if(isPressOnOwnedShip(x,y)){
-
+        if(gameController.isPressOnOwnedShip(x,y, displacementx, displacementy)){
+            System.out.println("SHIP PRESSED");
+            return;
         }
 
         if(selectedShip!=null){
@@ -237,10 +149,7 @@ public class GameScreen extends View{
         touchStarty = y-displacementy;
     }
 
-    private boolean isPressOnOwnedShip(float x, float y){
-        //Todo: properly test whether pressing ship.
-        return false;
-    }
+
 
     private boolean isPressOnPauseButton(float x, float y){
         return x>getWidth()-pauseButton.getWidth()-10&&y< 10+pauseButton.getHeight();
@@ -249,16 +158,28 @@ public class GameScreen extends View{
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (!hasBeenSetup) {
-            setupShips();
-            hasBeenSetup = true;
-        }
-
-        //System.out.println("selectedPosition: "+playerShips.get(0).getX());
 
         super.onDraw(canvas);
 
+        //Run game iteration through game logic
+        gameController.runGameIteration();
 
+        clearScreen(canvas);
+
+        drawBackground(canvas);
+
+        drawGameObjects(canvas);
+
+        drawShipSelectionGraphics(canvas);
+
+        checkEndGameConditions();
+
+        updateInterfaceGraphics(canvas);
+
+        drawGameText(canvas);
+    }
+
+    public void clearScreen(Canvas canvas){
         p.setColor(Color.BLACK);
 
         p.setAlpha(255);
@@ -267,7 +188,10 @@ public class GameScreen extends View{
         p.setStrokeWidth(1);
 
         canvas.drawRect(0, 0, getWidth(), getHeight(), p);
+    }
 
+    public void drawBackground(Canvas canvas){
+        //Repeat image four times to cover whole game
         canvas.drawBitmap(background, displacementx, displacementy, p);
         canvas.drawBitmap(background, background.getWidth() + displacementx, displacementy, p);
         canvas.drawBitmap(background, displacementx, +background.getHeight() + displacementy, p);
@@ -275,13 +199,20 @@ public class GameScreen extends View{
 
         canvas.drawBitmap(backgroundPlanet, mapSizex / 4 + displacementx, mapSizey / 4 + displacementy, p);
 
+        //Testing crap I think
         p.setColor(Color.BLUE);
         canvas.drawLine(mapSizex + displacementx, 0 + displacementy, mapSizex + displacementx, mapSizey + displacementy, p);
+    }
 
-        updateAndDrawObjectList(playerShips, canvas);
-        updateAndDrawObjectList(enemyShips, canvas);
-        updateAndDrawObjectList(gameObjects, canvas);
+    public void drawGameObjects(Canvas canvas){
+        drawObjectList(gameController.getObjectList(ObjectList.PLAYERSHIPS), canvas);
+        drawObjectList(gameController.getObjectList(ObjectList.ENEMYSHIPS), canvas);
+        drawObjectList(gameController.getObjectList(ObjectList.GAMEOBJECTS), canvas);
+    }
 
+    public void drawShipSelectionGraphics(Canvas canvas){
+        //Get currently selected ship
+        GameShip selectedShip = gameController.getSelectedShip();
 
         if(selectedShip!=null) {
             float x = selectedShip.getX();
@@ -300,7 +231,8 @@ public class GameScreen extends View{
                     }
                 }
 
-                GameObject selected = GameFunctions.checkForCollision(dragPosx-displacementx,dragPosy-displacementy,100,100);
+                //GameObject selected = GameFunctions.checkForCollision(dragPosx-displacementx,dragPosy-displacementy,100,100);
+                GameObject selected = GameFunctions.checkForCollisionsAccurate(dragPosx-displacementx,dragPosy-displacementy,50, gameController.enemyShips);
                 if(selected!=null) {
                     selectedShip.setEnemyTarget((GameShip)selected);
                     selectedShip.setHasEnemyTarget(true);
@@ -327,43 +259,40 @@ public class GameScreen extends View{
             p.setColor(Color.BLUE);
             canvas.drawCircle(x + displacementx, y + displacementy, radius, p);
         }
+    }
 
-        if(playerShips.size()==0){
-            gameText="Battle Lost";
-            gameIsOver=true;
-        }
-        if(enemyShips.size()==0){
-            gameText="Battle Won";
-            gameIsOver=true;
-        }
-
-        if(isPaused){
+    public void updateInterfaceGraphics(Canvas canvas){
+        if(gameController.isPaused()){
             canvas.drawBitmap(playButton, getWidth()-pauseButton.getWidth()-10, 10, p);
         }else{
             canvas.drawBitmap(pauseButton, getWidth()-pauseButton.getWidth()-10, 10, p);
         }
+    }
 
+    public void drawGameText(Canvas canvas){
         p.setColor(Color.GREEN);
         p.setTextSize(100);
         canvas.drawText(gameText, getWidth()/4,getHeight()/4,p);
     }
 
-    public void updateAndDrawObjectList(ArrayList<GameObject> list, Canvas canvas){
-        ArrayList<GameObject> listToRemove = new ArrayList<>();
+    public void checkEndGameConditions(){
+        //If list of player ships is empty, you have lost the battle and the game is over.
+        if(gameController.getObjectList(ObjectList.PLAYERSHIPS).size()==0){
+            gameText="Battle Lost";
+            gameIsOver=true;
+        }
+        //If the list of enemy ships is empty, you have won the battle and the game is over.
+        if(gameController.getObjectList(ObjectList.ENEMYSHIPS).size()==0){
+            gameText="Battle Won";
+            gameIsOver=true;
+        }
+    }
 
-        //update and draw all objects
+    public void drawObjectList(ArrayList<GameObject> list, Canvas canvas){
+        //draw all objects
         for(GameObject currentObject: list){
-            if(!isPaused)
-                currentObject.updatePosition();
-
             canvas.drawBitmap(currentObject.getGraphic(), rotateByMatrix(currentObject), null);
-            if(!currentObject.isAlive())listToRemove.add(currentObject);
         }
-
-        for(GameObject currentObject: listToRemove){
-            list.remove(currentObject);
-        }
-        listToRemove.clear();
     }
 
     public Matrix rotateByMatrix(GameObject object) {
@@ -379,44 +308,10 @@ public class GameScreen extends View{
         return matrix;
     }
 
-    public void selectNextShip(){
-        if(selectedShip==null){
-            selectedShip = (GameShip)playerShips.get(0);
-            selectedShipIndex = 0;
-        }else if(selectedShipIndex+1<playerShips.size())
-            selectedShip = (GameShip)playerShips.get(++selectedShipIndex);
-        else{
-            selectedShip = (GameShip)playerShips.get(0);
-            selectedShipIndex = 0;
-        }
-        //displacementx = -selectedShip.getX()+getWidth()/2;
-        //displacementy = -selectedShip.getY()+getHeight()/2;
-    }
-
-    public void selectPreviousShip(){
-        if(selectedShip==null){
-            selectedShip = (GameShip)playerShips.get(playerShips.size()-1);
-            selectedShipIndex = playerShips.size()-1;
-        }else if(selectedShipIndex-1<0) {
-            selectedShip = (GameShip)playerShips.get(playerShips.size()-1);
-            selectedShipIndex = playerShips.size()-1;
-        }
-        else{
-            selectedShip = (GameShip)playerShips.get(--selectedShipIndex);
-        }
-    }
-
     public void selectNone(){
         dragPosx=-1;
         dragPosy=-1;
-        selectedShip = null;
-    }
-
-    public void togglePauseGame(){
-        if(isPaused)
-            isPaused=false;
-        else
-            isPaused = true;
+        gameController.setSelectedShip(null);
     }
 
     public void fakeUnitMoveTouchTest(float x, float y) {
@@ -427,12 +322,7 @@ public class GameScreen extends View{
 
     }
 
-    public boolean shipIsAtTargetAngleTest(){
-        int shipAngle = Math.round(selectedShip.getAngle());
-        int targetAngle = Math.round(selectedShip.getTargetAngle());
 
-        return shipAngle==targetAngle;
-    }
 
     public float getDisplacementx() {
         return displacementx;
@@ -440,11 +330,5 @@ public class GameScreen extends View{
 
     public float getDisplacementy() {
         return displacementy;
-    }
-
-    public void moveShipToEdgeOfBoundsTest(){
-        GameShip ship = (GameShip)playerShips.get(0);
-
-        ship.setX(mapSizex-50);
     }
 }

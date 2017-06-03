@@ -24,6 +24,7 @@ public class LoadOutMenu extends AppCompatActivity{
     private ArrayList<GuiShip> shipsOwned;
 
     private int totalPoints = 0;
+    private int maxPoints = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,14 +178,14 @@ public class LoadOutMenu extends AppCompatActivity{
         }
 
         TextView pointsTextView = (TextView)findViewById(R.id.pointsTextView);
-        if(totalPoints>100)pointsTextView.setTextColor(Color.RED);
+        if(totalPoints>maxPoints)pointsTextView.setTextColor(Color.RED);
         else pointsTextView.setTextColor(Color.BLACK);
-        pointsTextView.setText(""+totalPoints+"/100");
+        pointsTextView.setText(""+totalPoints+"/"+maxPoints);
 
     }
 
     public void startGameActivity(View view){
-        if(totalPoints<=100) {
+        if(totalPoints<=maxPoints) {
             GameFunctions.setLoadoutShipList(shipsChosen);
             Intent intent = new Intent(this, GameActivity.class);
             startActivity(intent);

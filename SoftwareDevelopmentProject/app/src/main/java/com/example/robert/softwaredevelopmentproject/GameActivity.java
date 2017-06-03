@@ -93,12 +93,12 @@ public class GameActivity extends AppCompatActivity {
 
     public void nextShipButton(View view){
         gs = (GameScreen)findViewById(R.id.gameScreenView);
-        gs.selectNextShip();
+        gs.gameController.selectNextShip();
     }
 
     public void previousShipButton(View view){
         gs = (GameScreen)findViewById(R.id.gameScreenView);
-        gs.selectPreviousShip();
+        gs.gameController.selectPreviousShip();
     }
 
     public void unselectShipButton(View view){
@@ -108,5 +108,9 @@ public class GameActivity extends AppCompatActivity {
 
     public static GameScreen getGameScreen(){
         return gs;
+    }
+
+    public static GameController getGameController(){
+        return gs.gameController;
     }
 }

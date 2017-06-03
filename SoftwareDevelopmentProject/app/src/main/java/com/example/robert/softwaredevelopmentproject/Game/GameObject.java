@@ -3,6 +3,7 @@ package com.example.robert.softwaredevelopmentproject.Game;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 
+import com.example.robert.softwaredevelopmentproject.GameController;
 import com.example.robert.softwaredevelopmentproject.GameFunctions;
 import com.example.robert.softwaredevelopmentproject.GameScreen;
 
@@ -26,7 +27,7 @@ public abstract class GameObject {
         this.y = y;
         this.team = team;
 
-        int squareLength = GameScreen.mapGridSquareSize;
+        int squareLength = GameController.mapGridSquareSize;
 
     }
 

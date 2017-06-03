@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.text.format.Time;
 
 import com.example.robert.softwaredevelopmentproject.GameActivity;
+import com.example.robert.softwaredevelopmentproject.GameController;
 import com.example.robert.softwaredevelopmentproject.GameFunctions;
 import com.example.robert.softwaredevelopmentproject.GameScreen;
 import com.example.robert.softwaredevelopmentproject.ShipDictionary;
@@ -16,7 +17,7 @@ import java.util.Random;
  * Created by dingus on 11/26/2016.
  */
 public class GameShip extends GameObject {
-    GameScreen gs;
+    GameController gameController;
 
     int type;
 
@@ -41,7 +42,7 @@ public class GameShip extends GameObject {
         graphic = ShipDictionary.getGraphic(type, context);
         rotatedGraphic = graphic;
 
-        gs = GameActivity.getGameScreen();
+        gameController = GameActivity.getGameController();
     }
 
     public boolean hasTargetPosition() {
@@ -119,10 +120,10 @@ public class GameShip extends GameObject {
         float radAngle = (float)Math.toRadians(angle);
 
         if(health<=0){
-            gs.addExplosion(x,y-10);
-            gs.addExplosion(x-10,y+10);
-            gs.addExplosion(x+10,y+10);
-            GameScreen.shipGrid[gridPosition.x][gridPosition.y].remove(this);
+            gameController.addExplosion(x,y-10);
+            gameController.addExplosion(x-10,y+10);
+            gameController.addExplosion(x+10,y+10);
+            gameController.shipGrid[gridPosition.x][gridPosition.y].remove(this);
             alive=false;
         }
 
@@ -143,7 +144,7 @@ public class GameShip extends GameObject {
                     float shotPositiony = y;
                     shotPositionx += shotBeginDistance * Math.cos(radAngle);
                     shotPositiony += shotBeginDistance * Math.sin(radAngle);
-                    gs.addLaser(shotPositionx,shotPositiony,shotAngle);
+                    gameController.addLaser(shotPositionx,shotPositiony,shotAngle);
                 }
 
                 if(enemyTarget.isAlive()==false){
@@ -155,7 +156,7 @@ public class GameShip extends GameObject {
                     else
                         otherTeam = 1;
 
-                    GameShip newShipTarget = gs.getRandomShip(otherTeam);
+                    GameShip newShipTarget = gameController.getRandomShip(otherTeam);
 
                     if(newShipTarget!=null){
                         enemyTarget = newShipTarget;
@@ -201,17 +202,17 @@ public class GameShip extends GameObject {
         if(!hasEnemyTarget||(hasEnemyTarget&&!GameFunctions.isUnderRange(x,y,enemyTarget.getX(),enemyTarget.getY(), stopRange))) {
             float xMove = velocity * (float) Math.cos(radAngle);
             float yMove = velocity * (float) Math.sin(radAngle);
-            int squareLength = GameScreen.mapGridSquareSize;
+            int squareLength = gameController.mapGridSquareSize;
 
             if(GameFunctions.hasGridPositionChanged(x,y,x+xMove,y+yMove)){
                 //System.out.println("GRIDPOSITION: "+gridPosition.x+" "+gridPosition.y);
                 Point potentialGridPos = GameFunctions.convertPositionToGridCoord(x+xMove,y+yMove);
                 if(potentialGridPos.x>=0&&potentialGridPos.y>=0
-                        &&potentialGridPos.x<GameScreen.shipGrid.length&&potentialGridPos.y<GameScreen.shipGrid[0].length) {
+                        &&potentialGridPos.x<gameController.shipGrid.length&&potentialGridPos.y<gameController.shipGrid[0].length) {
                     if(gridPosition.x>=0&&gridPosition.y>=0)
-                        GameScreen.shipGrid[gridPosition.x][gridPosition.y].remove(this);
+                        gameController.shipGrid[gridPosition.x][gridPosition.y].remove(this);
                     gridPosition = potentialGridPos;
-                    GameScreen.shipGrid[gridPosition.x][gridPosition.y].add(this);
+                    gameController.shipGrid[gridPosition.x][gridPosition.y].add(this);
                 }else{
                     targetx=GameScreen.mapSizex/2;
                     targety=GameScreen.mapSizey/2;
