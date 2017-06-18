@@ -31,6 +31,8 @@ import java.util.TimerTask;
  * Created by dingus on 11/7/2016.
  */
 public class GameScreen extends View{
+
+    int touchTimer = 0;
     private Paint p;
 
     boolean gameIsOver = false;
@@ -97,25 +99,22 @@ public class GameScreen extends View{
         return true;
     }
 
-    public void touch_up(float x, float y) {
+    public void touch_start(float x, float y) {
+        touchTimer = 0;
         GameShip selectedShip = gameController.getSelectedShip();
 
-        if(selectedShip!=null){
-            selectedShip.setTargetx(x-displacementx);
-            selectedShip.setTargety(y-displacementy);
-            selectedShip.setHasTargetPosition(true);
-            return;
-        }
+        touchStartx = x-displacementx;
+        touchStarty = y-displacementy;
     }
 
     public void touch_move(float x, float y) {
         GameShip selectedShip = gameController.getSelectedShip();
 
-        if(selectedShip!=null){
-            dragPosx = x;
-            dragPosy = y;
-            return;
-        }
+//        if(selectedShip!=null&&touchTimer<=15){
+//            dragPosx = x;
+//            dragPosy = y;
+//            return;
+//        }
 
         if(x-touchStartx<0&&x-touchStartx>-(mapSizex-getWidth())) {
             displacementx = x - touchStartx;
@@ -126,30 +125,37 @@ public class GameScreen extends View{
 
     }
 
-    public void touch_start(float x, float y) {
-        GameShip selectedShip = gameController.getSelectedShip();
-
+    public void touch_up(float x, float y) {
         if(isPressOnPauseButton(x,y)){
             gameController.togglePauseGame();
             return;
         }
 
-        if(gameController.isPressOnOwnedShip(x,y, displacementx, displacementy)){
-            System.out.println("SHIP PRESSED");
-            return;
-        }
+        if(touchTimer<=15) {
+            System.out.println("Tapped");
 
-        if(selectedShip!=null){
-            dragPosx = x;
-            dragPosy = y;
-            return;
-        }
+            if(gameController.isPressOnOwnedShip(x,y, displacementx, displacementy)){
+                System.out.println("SHIP PRESSED");
+                GameShip selectedShip = gameController.getSelectedShip();
+                dragPosx = selectedShip.getTargetx();
+                dragPosy = selectedShip.getTargety();
+                return;
+            }
 
-        touchStartx = x-displacementx;
-        touchStarty = y-displacementy;
+            GameShip selectedShip = gameController.getSelectedShip();
+
+            if (selectedShip != null) {
+                dragPosx = x- displacementx;
+                dragPosy = y- displacementy;
+                //return;
+
+                selectedShip.setTargetx(x - displacementx);
+                selectedShip.setTargety(y - displacementy);
+                selectedShip.setHasTargetPosition(true);
+                return;
+            }
+        }
     }
-
-
 
     private boolean isPressOnPauseButton(float x, float y){
         return x>getWidth()-pauseButton.getWidth()-10&&y< 10+pauseButton.getHeight();
@@ -158,6 +164,7 @@ public class GameScreen extends View{
 
     @Override
     protected void onDraw(Canvas canvas) {
+        touchTimer++;
 
         super.onDraw(canvas);
 
@@ -214,14 +221,14 @@ public class GameScreen extends View{
         //Get currently selected ship
         GameShip selectedShip = gameController.getSelectedShip();
 
-        if(selectedShip!=null) {
+        if(selectedShip!=null&&selectedShip.isAlive()) {
             float x = selectedShip.getX();
             float y = selectedShip.getY();
             float width = selectedShip.getGraphic().getWidth();
             float height = selectedShip.getGraphic().getHeight();
             float radius;
 
-            if (dragPosx >= 0 && dragPosy >= 0) {
+            if (dragPosx >= 0 && dragPosy >= 0 &&selectedShip.hasTargetPosition()) {
                 p.setStyle(Paint.Style.STROKE);
 
                 if(selectedShip.isHasEnemyTarget()){
@@ -232,13 +239,13 @@ public class GameScreen extends View{
                 }
 
                 //GameObject selected = GameFunctions.checkForCollision(dragPosx-displacementx,dragPosy-displacementy,100,100);
-                GameObject selected = GameFunctions.checkForCollisionsAccurate(dragPosx-displacementx,dragPosy-displacementy,50, gameController.enemyShips);
+                GameObject selected = GameFunctions.checkForCollisionsAccurate(dragPosx,dragPosy,50, gameController.enemyShips);
                 if(selected!=null) {
                     selectedShip.setEnemyTarget((GameShip)selected);
                     selectedShip.setHasEnemyTarget(true);
                     p.setColor(Color.RED);
-                    dragPosx=selected.getX()+displacementx;
-                    dragPosy=selected.getY()+displacementy;
+                    dragPosx=selected.getX();
+                    dragPosy=selected.getY();
                 }
                 else {
                     selectedShip.setEnemyTarget(null);
@@ -246,8 +253,9 @@ public class GameScreen extends View{
                     p.setColor(Color.BLUE);
                 }
 
-                canvas.drawLine(x + displacementx, y + displacementy, dragPosx, dragPosy, p);
-                canvas.drawCircle(dragPosx, dragPosy, 20, p);
+
+                canvas.drawLine(x + displacementx, y + displacementy, dragPosx+ displacementx, dragPosy+ displacementy, p);
+                canvas.drawCircle(dragPosx+ displacementx, dragPosy+ displacementy, 20, p);
             }
 
             if (width > height)

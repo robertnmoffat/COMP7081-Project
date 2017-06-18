@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" Ship Name"
-                android:id="@+id/textView4" />
+                android:id="@+id/shipName_text" />
 
             <Spinner
                 android:layout_width="wrap_content"

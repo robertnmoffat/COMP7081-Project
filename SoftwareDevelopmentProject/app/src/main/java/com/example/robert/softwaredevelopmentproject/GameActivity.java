@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class GameActivity extends AppCompatActivity {
     Handler h = new Handler();
@@ -84,6 +85,12 @@ public class GameActivity extends AppCompatActivity {
     public void initGfx(){
         GameScreen gs = (GameScreen)findViewById(R.id.gameScreenView);
         gs.invalidate();
+        TextView shipNameTextView = (TextView)findViewById(R.id.shipName_text);
+        if(gs.gameController.getSelectedShip()!=null) {
+            shipNameTextView.setText(ShipDictionary.getShipName(gs.gameController.getSelectedShip().getType()));
+        }else{
+            shipNameTextView.setText("None Selected");
+        }
     }
 
     public void goToRewards(View view){
